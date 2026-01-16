@@ -10,6 +10,8 @@ import { AnalysisResponse } from '@/types/ai';
 import { useAuth } from '@/lib/auth-context';
 import AuthModal from '@/components/AuthModal';
 
+import { generatePDF } from '@/types/pdf-utils';
+
 export default function Home() {
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +45,8 @@ export default function Home() {
   const handleDownload = () => {
     if (!user) {
       setIsAuthModalOpen(true);
-    } else {
-      alert('Generating your PDF download...');
+    } else if (analysis) {
+      generatePDF(analysis);
     }
   };
 
