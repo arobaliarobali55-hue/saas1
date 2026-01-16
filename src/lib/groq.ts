@@ -1,7 +1,6 @@
-
-const apiKey = process.env.BYTEZ_API_KEY || "";
-
 import { AnalysisResponse, TodoItem } from "@/types/ai";
+
+const apiKey = process.env.GROQ_API_KEY || "";
 
 export async function analyzeStories(past: string, present: string, future: string): Promise<AnalysisResponse> {
     const prompt = `
@@ -21,10 +20,10 @@ export async function analyzeStories(past: string, present: string, future: stri
     }
   `;
 
-    const response = await fetch("https://api.bytez.com/models/v2/Qwen/Qwen3-4B", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
-            "Authorization": apiKey,
+            "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -38,42 +37,27 @@ export async function analyzeStories(past: string, present: string, future: stri
                     content: prompt
                 }
             ],
-            stream: false,
-            params: {
-                max_length: 2000,
-                temperature: 0.7
-            }
+            model: "groq/compound",
+            response_format: { type: "json_object" }
         }),
     });
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error("Bytez API Error:", errorText);
-        throw new Error(`Bytez API error: ${response.statusText}`);
+        console.error("Groq API Error:", errorText);
+        throw new Error(`Groq API error: ${response.statusText}`);
     }
 
     const result = await response.json();
-
-    // Bytez v2 format: { error: null, output: { role: 'assistant', content: '...' } }
-    let text = "";
-    if (result.output && typeof result.output === 'object') {
-        text = result.output.content || "";
-    } else if (result.choices?.[0]?.message?.content) {
-        text = result.choices[0].message.content;
-    } else if (typeof result.output === 'string') {
-        text = result.output;
-    }
+    let text = result.choices?.[0]?.message?.content || "";
 
     if (!text) {
-        console.error("Empty response from Bytez:", result);
+        console.error("Empty response from Groq:", result);
         throw new Error("Empty response from AI");
     }
 
-    // Strip <think>...</think> tags if present
-    text = text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-
     // Clean the text if it contains markdown code blocks
-    let cleanJson = text;
+    let cleanJson = text.trim();
     if (cleanJson.includes("```")) {
         const match = cleanJson.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
         if (match) {

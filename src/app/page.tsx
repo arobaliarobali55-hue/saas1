@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Zap, Target, BookOpen } from 'lucide-react';
 import StoryForm from '@/components/StoryForm';
 import TodoList from '@/components/TodoList';
-import { AnalysisResponse } from '@/lib/bytez';
+import { AnalysisResponse } from '@/types/ai';
 
 import { useAuth } from '@/lib/auth-context';
 import AuthModal from '@/components/AuthModal';

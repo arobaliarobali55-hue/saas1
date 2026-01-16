@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle, Download, FileText, Lock } from 'lucide-react';
-import { TodoItem } from '@/lib/gemini';
+import { TodoItem } from '@/types/ai';
 
 interface TodoListProps {
     items: TodoItem[];

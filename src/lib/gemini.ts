@@ -8,16 +8,7 @@ export const model = genAI.getGenerativeModel(
   { apiVersion: "v1" }
 );
 
-export interface TodoItem {
-  task: string;
-  description: string;
-  category: "Past" | "Present" | "Future";
-}
-
-export interface AnalysisResponse {
-  todolist: TodoItem[];
-  guide: string;
-}
+import { AnalysisResponse, TodoItem } from "@/types/ai";
 
 export async function analyzeStories(past: string, present: string, future: string): Promise<AnalysisResponse> {
   const prompt = `
